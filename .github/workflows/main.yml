@@ -17,12 +17,17 @@ jobs:
         os:
           - ubuntu-latest
         compiler:
+          - clang-13
+          - clang-14
+          - clang-15
+          - clang-16
           - gcc-10
           - gcc-11
           - gcc-12
           - gcc-13
     runs-on: ${{ matrix.os }}
     steps:
+    - run: sudo apt install libc6-dev
     - uses: actions/checkout@v3
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
@@ -34,5 +39,5 @@ jobs:
         CC: ${{ matrix.compiler }}
     - uses: actions/upload-artifact@v4
       with:
-        name: defines.json
+        name: defines-${{ matrix.compiler }}.json
         path: defines.json
