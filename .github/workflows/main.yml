@@ -22,6 +22,7 @@ jobs:
           - { os: ubuntu-latest, cc: gcc-11 }
           - { os: ubuntu-latest, cc: gcc-12 }
           - { os: ubuntu-latest, cc: gcc-13 }
+          - { os: windows-latest, cc: msvc-19 }
     runs-on: ${{ matrix.target.os }}
     steps:
     - uses: actions/checkout@v3
