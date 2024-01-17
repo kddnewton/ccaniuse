@@ -5,7 +5,12 @@ file "configure" => ["configure.ac"] do
 end
 
 file "config.h" => ["configure"] do
-  sh "./configure"
+  begin
+    sh "./configure"
+  rescue
+    puts File.read("config.log")
+    raise
+  end
 end
 
 file "defines.json" => ["config.h"] do
