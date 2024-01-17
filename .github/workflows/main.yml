@@ -11,7 +11,21 @@ on:
   pull_request:
 
 jobs:
+  autoconf:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run autoconf
+      run: autoconf
+    - name: Bundle configure
+      run: tar -cvf configure.tar configure
+    - name: Upload configure.tar
+      uses: actions/upload-artifact@v4
+      with:
+        name: configure.tar
+        path: configure.tar
   tests:
+    needs: autoconf
     strategy:
       matrix:
         target:
@@ -26,31 +40,33 @@ jobs:
     runs-on: ${{ matrix.target.os }}
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
+    - name: Download configure.tar
+      uses: actions/download-artifact@v4
       with:
-        ruby-version: "3.3"
-    - name: Build defines.json
-      run: rake defines.json
+        name: configure.tar
+    - name: Unbundle configure
+      run: tar -xvf configure.tar
+    - name: Run configure
+      run: ./configure
       env:
         CC: ${{ matrix.target.cc }}
+    - run: ls -R
+    - name: Build defines.json
+      run: ruby bin/defines.rb
     - uses: actions/upload-artifact@v4
       with:
-        name: defines-${{ matrix.target.cc }}
+        name: defines-${{ matrix.target.os }}-${{ matrix.target.cc }}
         path: defines.json
   group:
-    runs-on: ubuntu-latest
     needs: tests
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: "3.3"
     - uses: actions/download-artifact@v4
       with:
         pattern: defines-*
-    - run: rake grouped.json
+    - name: Build grouped.json
+      run: ruby bin/grouped.rb
     - name: Upload grouped.json
       uses: actions/upload-artifact@v4
       with:
