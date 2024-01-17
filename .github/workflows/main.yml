@@ -14,17 +14,22 @@ jobs:
   build:
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
-        compiler:
-          - clang-13
-          - clang-14
-          - clang-15
-          - gcc-10
-          - gcc-11
-          - gcc-12
-          - gcc-13
-    runs-on: ${{ matrix.os }}
+        target:
+          - { os: ubuntu-latest, cc: clang-13 }
+          - { os: ubuntu-latest, cc: clang-14 }
+          - { os: ubuntu-latest, cc: clang-15 }
+          - { os: ubuntu-latest, cc: gcc-10 }
+          - { os: ubuntu-latest, cc: gcc-11 }
+          - { os: ubuntu-latest, cc: gcc-12 }
+          - { os: ubuntu-latest, cc: gcc-13 }
+          - { os: macos-latest,  cc: clang-13 }
+          - { os: macos-latest,  cc: clang-14 }
+          - { os: macos-latest,  cc: clang-15 }
+          - { os: macos-latest,  cc: gcc-10 }
+          - { os: macos-latest,  cc: gcc-11 }
+          - { os: macos-latest,  cc: gcc-12 }
+          - { os: macos-latest,  cc: gcc-13 }
+    runs-on: ${{ matrix.target.os }}
     steps:
     - uses: actions/checkout@v3
     - name: Set up Ruby
@@ -34,8 +39,8 @@ jobs:
     - name: Build defines.json
       run: rake defines.json
       env:
-        CC: ${{ matrix.compiler }}
+        CC: ${{ matrix.target.cc }}
     - uses: actions/upload-artifact@v4
       with:
-        name: defines-${{ matrix.compiler }}.json
+        name: defines-${{ matrix.target.cc }}.json
         path: defines.json
