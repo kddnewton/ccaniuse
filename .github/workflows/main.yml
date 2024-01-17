@@ -22,13 +22,6 @@ jobs:
           - { os: ubuntu-latest, cc: gcc-11 }
           - { os: ubuntu-latest, cc: gcc-12 }
           - { os: ubuntu-latest, cc: gcc-13 }
-          - { os: macos-latest,  cc: clang-13 }
-          - { os: macos-latest,  cc: clang-14 }
-          - { os: macos-latest,  cc: clang-15 }
-          - { os: macos-latest,  cc: gcc-10 }
-          - { os: macos-latest,  cc: gcc-11 }
-          - { os: macos-latest,  cc: gcc-12 }
-          - { os: macos-latest,  cc: gcc-13 }
     runs-on: ${{ matrix.target.os }}
     steps:
     - uses: actions/checkout@v3
