@@ -1,2 +1,1 @@
-#cmakedefine HAVE_EXP @HAVE_EXP@
-#cmakedefine HAVE_FOOBAR @HAVE_FOOBAR@
+#cmakedefine HAVE_NORETURN @HAVE_NORETURN@
