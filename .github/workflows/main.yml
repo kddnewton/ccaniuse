@@ -11,21 +11,7 @@ on:
   pull_request:
 
 jobs:
-  autoconf:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Run autoconf
-      run: autoconf
-    - name: Bundle configure
-      run: tar -cvf configure.tar configure
-    - name: Upload configure.tar
-      uses: actions/upload-artifact@v4
-      with:
-        name: configure.tar
-        path: configure.tar
   tests:
-    needs: autoconf
     strategy:
       matrix:
         target:
@@ -40,17 +26,8 @@ jobs:
     runs-on: ${{ matrix.target.os }}
     steps:
     - uses: actions/checkout@v3
-    - name: Download configure.tar
-      uses: actions/download-artifact@v4
-      with:
-        name: configure.tar
-    - name: Unbundle configure
-      run: tar -xvf configure.tar
-    - name: Run configure
-      run: ./configure
-      env:
-        CC: ${{ matrix.target.cc }}
-    - run: ls -R
+    - name: Run cmake
+      run: cmake . -DCMAKE_C_COMPILER=${{ matrix.target.cc }}
     - name: Build defines.json
       run: ruby bin/defines.rb
     - uses: actions/upload-artifact@v4

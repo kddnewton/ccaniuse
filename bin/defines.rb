@@ -1,15 +1,17 @@
 require "json"
 
 Dir.chdir(File.expand_path("..", __dir__)) do
-  pairs = File.read("config.h").chomp.split(/ ?\-D/).drop(1)
-
-  defines = pairs.to_h { |pair| pair.split("=") }
-  defines.delete("PACKAGE_NAME")
-  defines.delete("PACKAGE_TARNAME")
-  defines.delete("PACKAGE_VERSION")
-  defines.delete("PACKAGE_STRING")
-  defines.delete("PACKAGE_BUGREPORT")
-  defines.delete("PACKAGE_URL")
+  defines =
+    File.foreach("config.h", chomp: true).to_h do |pair|
+      case pair
+      when %r{^#define (\S+) (.*)$}
+        [$1, $2]
+      when %r{^/\* #undef (\S+) \*/$}
+        [$1, nil]
+      else
+        raise "Invalid line: #{pair}"
+      end
+    end
 
   File.write("defines.json", JSON.pretty_generate(defines))
 end
