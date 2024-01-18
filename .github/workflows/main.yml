@@ -22,12 +22,20 @@ jobs:
           - { os: ubuntu-latest, cc: gcc-11 }
           - { os: ubuntu-latest, cc: gcc-12 }
           - { os: ubuntu-latest, cc: gcc-13 }
+          - { os: windows-latest, cc: msvc-13 }
+          - { os: windows-latest, cc: msvc-15 }
+          - { os: windows-latest, cc: msvc-17 }
           - { os: windows-latest, cc: msvc-19 }
+          - { os: macos-latest, cc: gcc-11 }
+          - { os: macos-latest, cc: gcc-12 }
+          - { os: macos-latest, cc: gcc-13 }
     runs-on: ${{ matrix.target.os }}
     steps:
     - uses: actions/checkout@v3
     - name: Run cmake
       run: cmake . -DCMAKE_C_COMPILER=${{ matrix.target.cc }}
+      env:
+        CC: ${{ matrix.target.cc }}
     - name: Build defines.json
       run: ruby bin/defines.rb
     - uses: actions/upload-artifact@v4
